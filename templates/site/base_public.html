@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AdVance Home Real Estate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+</head>
+<body class="ah-body">
+
+<header class="ah-header">
+  <div class="ah-container ah-header-inner">
+    <a href="{% url 'public_home' %}" class="ah-logo">
+      <span class="ah-logo-icon">🏠</span>
+      <span class="ah-logo-text">AdVance Home Real Estate</span>
+    </a>
+
+    <nav class="ah-nav">
+      <a href="{% url 'public_home' %}" class="ah-nav-link">Home</a>
+      <a href="{% url 'public_about' %}" class="ah-nav-link">About Us</a>
+      <a href="{% url 'public_listings' %}" class="ah-nav-link">Listings</a>
+      <a href="{% url 'public_omaha_info' %}" class="ah-nav-link">Omaha Info</a>
+      <a href="{% url 'public_contact' %}" class="ah-nav-link">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="ah-main">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="ah-footer">
+  <div class="ah-container ah-footer-inner">
+    <span>© 2025 AdVance Home Real Estate. All rights reserved.</span>
+    <span>Internal project demo — not for production use.</span>
+  </div>
+</footer>
+
+</body>
+</html>

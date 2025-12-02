@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AdVance Home Admin Center</title>
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+  <div class="auth-card">
+    <!-- Brand / Welcome panel -->
+    <section class="panel-left" style="background: linear-gradient(135deg, rgba(109,40,217,.95), rgba(59,130,246,.95));">
+      <div class="brand">
+        <div class="dot"></div>
+        AdVance Home
+      </div>
+      <div class="hero">
+        <h1>Welcome to AdVance Home Admin Center</h1>
+        <p>Sign in to access your dashboard and manage your services with ease.</p>
+      </div>
+    </section>
+
+    <!-- Form panel -->
+    <section class="panel-right">
+      <div class="form-wrap">
+        <h2>Login</h2>
+        <p class="lead">Use your admin account credential to continue.</p>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <label for="id_username">Username</label>
+          <input id="id_username" type="text" name="username" required autofocus>
+
+          <label for="id_password">Password</label>
+          <input id="id_password" type="password" name="password" required>
+
+
+
+          <button type="submit">Login</button>
+
+
+          <div class="footer">© {{ now|default:'' }} AdVance Home</div>
+        </form>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

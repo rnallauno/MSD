@@ -1,0 +1,86 @@
+{% extends "site/base_public.html" %}
+{% load static humanize %}
+
+{% block content %}
+<div class="ah-page">
+  <section class="ah-section ah-section-detail">
+    <div class="ah-container">
+      <div class="ah-detail-layout">
+
+        <!-- Gallery -->
+        <div class="ah-detail-gallery">
+          {% if photos %}
+            <div class="ah-detail-main-photo">
+              <img src="{{ photos.0.image.url }}" alt="Photo of {{ listing }}">
+            </div>
+
+            <div class="ah-detail-thumbs">
+              {% for photo in photos %}
+                <div class="ah-thumb">
+                  <img src="{{ photo.image.url }}"
+                       alt="{{ photo.caption|default:'Listing photo' }}">
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="ah-detail-main-photo ah-detail-main-photo--empty">
+              <span>No photos for this listing yet.</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Info -->
+        <div class="ah-detail-info">
+          <h1 class="ah-detail-title">
+            {{ listing.street }}, {{ listing.city }}, {{ listing.state }} {{ listing.zipcode }}
+          </h1>
+
+          <h2 class="ah-detail-price">
+            ${{ listing.price|floatformat:0|intcomma }}
+          </h2>
+
+          <p class="ah-detail-meta">
+            {{ listing.beds|default:"-" }} beds ·
+            {{ listing.baths|default:"-" }} baths ·
+            {% if listing.sqft %}{{ listing.sqft|intcomma }} sqft{% else %}— sqft{% endif %}
+          </p>
+
+          {% if listing.neighborhood %}
+            <p class="ah-detail-meta">Neighborhood: {{ listing.neighborhood.name }}</p>
+          {% endif %}
+          {% if listing.home_type %}
+            <p class="ah-detail-meta">Home type: {{ listing.home_type.type_name }}</p>
+          {% endif %}
+
+          <hr>
+
+          <h3>About this home</h3>
+          <p class="ah-detail-description">
+            {{ listing.description|linebreaks }}
+          </p>
+
+          <div class="ah-detail-extra">
+            {% if listing.lot_size_sqft %}
+              <p>Lot size: {{ listing.lot_size_sqft|intcomma }} sqft</p>
+            {% endif %}
+            {% if listing.garage_spaces %}
+              <p>Garage: {{ listing.garage_spaces }} spaces</p>
+            {% endif %}
+            {% if listing.year_built %}
+              <p>Year built: {{ listing.year_built }}</p>
+            {% endif %}
+            {% if listing.hoa_fee %}
+              <p>HOA fee: ${{ listing.hoa_fee }}</p>
+            {% endif %}
+          </div>
+
+          <a href="{% url 'public_listings' %}" class="ah-btn ah-btn-outline">
+            ← Back to listings
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

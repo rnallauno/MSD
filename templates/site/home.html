@@ -1,0 +1,109 @@
+{% extends "site/base_public.html" %}
+{% load humanize %}
+
+{% block content %}
+<section class="ah-hero{% if featured %} ah-hero-with-photo{% endif %}"
+         {% if featured and featured.main_photo_url %}
+         style="background-image: linear-gradient(120deg, rgba(18,22,43,.9), rgba(22,28,65,.85)), url('{{ featured.main_photo_url }}');"
+         {% endif %}>
+    <div class="ah-container ah-hero-inner">
+        <div class="ah-hero-copy">
+            <p class="ah-hero-kicker">Omaha · Nebraska</p>
+            <h1 class="ah-hero-title">
+                Find your next home with<br />
+                <span>AdVance Home.</span>
+            </h1>
+            <p class="ah-hero-text">
+                A modern real estate experience focused on clarity, neighborhood insight,
+                and a streamlined process for both residents and administrators.
+            </p>
+            <div class="ah-hero-actions">
+                <a href="{% url 'public_listings' %}" class="ah-btn ah-btn-primary">Browse Listings</a>
+                <a href="{% url 'public_contact' %}" class="ah-btn ah-btn-soft">Talk to our team</a>
+            </div>
+        </div>
+
+        {% if featured %}
+        <aside class="ah-featured-card">
+            <p class="ah-pill ah-pill-gold">Featured Listing</p>
+            <h3 class="ah-featured-price">
+                ${{ featured.price|intcomma }}
+            </h3>
+            <p class="ah-featured-address">
+                {{ featured.street }}<br/>
+                {{ featured.city }}, {{ featured.state }} {{ featured.zipcode }}
+            </p>
+            <p class="ah-featured-meta">
+                {{ featured.beds|floatformat:0 }} beds ·
+                {{ featured.baths|floatformat:1 }} baths ·
+                {{ featured.sqft|intcomma }} sqft
+            </p>
+            <a
+                {% if featured.get_absolute_url %}
+                    href="{{ featured.get_absolute_url }}"
+                {% else %}
+                    href="{% url 'public_listings' %}"
+                {% endif %}
+                class="ah-btn ah-btn-full ah-btn-secondary">
+                View listing
+            </a>
+        </aside>
+        {% endif %}
+    </div>
+</section>
+
+<section class="ah-section">
+    <div class="ah-container">
+        <header class="ah-section-header">
+            <h2>Latest listings</h2>
+            <a href="{% url 'public_listings' %}" class="ah-link">View all listings →</a>
+        </header>
+
+        {% if latest_listings %}
+        <div class="ah-card-grid">
+            {% for listing in latest_listings %}
+            <article class="ah-card">
+                <div class="ah-card-photo">
+                    {% if listing.main_photo_url %}
+                        <img src="{{ listing.main_photo_url }}" alt="{{ listing }}" />
+                    {% else %}
+                        <div class="ah-card-photo-placeholder">Photo</div>
+                    {% endif %}
+                </div>
+                <div class="ah-card-body">
+                    <p class="ah-card-location">
+                        {{ listing.city }}, {{ listing.state }}
+                    </p>
+                    <h3 class="ah-card-price">
+                        ${{ listing.price|intcomma }}
+                    </h3>
+                    <p class="ah-card-meta">
+                        {{ listing.beds|floatformat:0 }} beds ·
+                        {{ listing.baths|floatformat:1 }} baths ·
+                        {{ listing.sqft|intcomma }} sqft
+                    </p>
+                    <p class="ah-card-address">
+                        {{ listing.street }}
+                    </p>
+
+                    <a
+                        {% if listing.get_absolute_url %}
+                            href="{{ listing.get_absolute_url }}"
+                        {% else %}
+                            href="{% url 'public_listings' %}"
+                        {% endif %}
+                        class="ah-btn ah-btn-secondary ah-btn-full">
+                        View details
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="ah-empty">
+            No listings yet. Add some in the admin dashboard.
+        </p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

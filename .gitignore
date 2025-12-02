@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+
+# venvs
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Django collectstatic output (if you ever use it)
+staticfiles/
+
+# PyCharm
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

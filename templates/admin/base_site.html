@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}
+
+{% block title %}AdVance Home Real Estate Admin Dashboard{% endblock %}
+
+{% block branding %}
+<h1 id="site-name" style="display: flex; align-items: center; gap: 10px;">
+  <a href="{% url 'admin:index' %}">
+    AdVance Home Real Estate Admin Dashboard
+  </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="padding: 4px 20px; font-size: 13px; color: #ddd;">
+  Managed by AdVance Home IT Division | Secure Access Environment
+</div>
+{% endblock %}

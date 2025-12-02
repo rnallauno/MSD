@@ -1,0 +1,121 @@
+{% extends "site/base_public.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<section class="ah-section">
+  <div class="ah-container">
+
+    <!-- BACK BUTTON -->
+    <a href="{% url 'public_listings' %}" class="ld-back-link">
+      ← Back to listings
+    </a>
+
+    <!-- PHOTO GALLERY -->
+    <section class="ld-gallery ld-gallery--wide">
+      {% if photos %}
+        <div class="ld-image-wrapper">
+          {% for photo in photos %}
+            <img
+              src="{{ photo.image.url }}"
+              alt="{{ listing }}"
+              class="ld-image{% if forloop.first %} ld-image--active{% endif %}"
+              data-index="{{ forloop.counter0 }}"
+            >
+          {% endfor %}
+
+          <button type="button" class="ld-nav ld-nav-prev" aria-label="Previous photo">
+            &#10094;
+          </button>
+          <button type="button" class="ld-nav ld-nav-next" aria-label="Next photo">
+            &#10095;
+          </button>
+
+          <div class="ld-counter">
+            <span id="ld-current">1</span> / {{ photos|length }}
+          </div>
+        </div>
+      {% else %}
+        <div class="ld-image-wrapper ld-image-wrapper--empty">
+          <span>No photos available</span>
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- LISTING INFO BELOW THE PHOTO -->
+    <aside class="ld-info ld-info--full">
+      <h1 class="ld-price">${{ listing.price|intcomma }}</h1>
+
+      <p class="ld-address-main">
+        {{ listing.street }}<br>
+        {{ listing.city }}, {{ listing.state }} {{ listing.zipcode }}
+      </p>
+
+      <p class="ld-meta">
+        {% if listing.beds %}{{ listing.beds|floatformat:0 }} beds{% endif %}
+        {% if listing.baths %} · {{ listing.baths|floatformat:1 }} baths{% endif %}
+        {% if listing.sqft %} · {{ listing.sqft|intcomma }} sqft{% endif %}
+      </p>
+
+      {% if listing.neighborhood %}
+        <p class="ld-tag-row">
+          <span class="ld-tag">{{ listing.neighborhood.name }}</span>
+        </p>
+      {% endif %}
+
+      {% if listing.description %}
+        <h2 class="ld-section-title">Overview</h2>
+        <p class="ld-description">{{ listing.description }}</p>
+      {% endif %}
+
+      <h2 class="ld-section-title">Property details</h2>
+      <dl class="ld-specs">
+        {% if listing.year_built %}
+          <div><dt>Year built</dt><dd>{{ listing.year_built }}</dd></div>
+        {% endif %}
+        {% if listing.home_type %}
+          <div><dt>Type</dt><dd>{{ listing.home_type }}</dd></div>
+        {% endif %}
+        {% if listing.garage_spaces %}
+          <div><dt>Garage</dt><dd>{{ listing.garage_spaces }} spaces</dd></div>
+        {% endif %}
+        {% if listing.lot_size_sqft %}
+          <div><dt>Lot size</dt><dd>{{ listing.lot_size_sqft|intcomma }} sqft</dd></div>
+        {% endif %}
+        {% if listing.hoa_fee %}
+          <div><dt>HOA fee</dt><dd>${{ listing.hoa_fee|floatformat:0 }}/mo</dd></div>
+        {% endif %}
+      </dl>
+    </aside>
+
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const images = Array.from(document.querySelectorAll('.ld-image'));
+    if (!images.length) return;
+
+    let current = 0;
+    const total = images.length;
+    const prevBtn = document.querySelector('.ld-nav-prev');
+    const nextBtn = document.querySelector('.ld-nav-next');
+    const counterEl = document.getElementById('ld-current');
+
+    function show(index) {
+      images[current].classList.remove('ld-image--active');
+      current = (index + total) % total;   // wrap around
+      images[current].classList.add('ld-image--active');
+      if (counterEl) counterEl.textContent = current + 1;
+    }
+
+    prevBtn && prevBtn.addEventListener('click', () => show(current - 1));
+    nextBtn && nextBtn.addEventListener('click', () => show(current + 1));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(current - 1);
+      if (e.key === 'ArrowRight') show(current + 1);
+    });
+  });
+</script>
+{% endblock %}

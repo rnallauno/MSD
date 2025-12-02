@@ -1,0 +1,88 @@
+{% extends "site/base_public.html" %}
+{% load static humanize %}
+
+{% block content %}
+<div class="lh-shell">
+  <section class="lh-header-wrap">
+    <div class="ah-container lh-header">
+      <div>
+        <h1 class="lh-title">Homes for sale in Omaha</h1>
+        <p class="lh-subtitle">
+          Browse active listings published through the AdVance Home Real Estate admin portal.
+        </p>
+      </div>
+      <div class="lh-header-meta">
+        {% if listings %}
+          <span>{{ listings|length }} home{{ listings|length|pluralize }} available</span>
+        {% else %}
+          <span>No active listings yet</span>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="lh-grid-wrap">
+    <div class="ah-container">
+      {% if listings %}
+        <div class="lh-grid">
+          {% for listing in listings %}
+            <article class="lh-card">
+              <a href="{% url 'public_listing_detail' listing.pk %}" class="lh-card-image-link">
+                <div class="lh-card-image-wrapper">
+                  {% if listing.main_photo_url %}
+                    <img src="{{ listing.main_photo_url }}"
+                         alt="Photo of {{ listing }}"
+                         class="lh-card-image">
+                  {% else %}
+                    <div class="lh-card-image lh-card-image--empty">
+                      <span>No photo</span>
+                    </div>
+                  {% endif %}
+                </div>
+              </a>
+
+              <div class="lh-card-body">
+                <div class="lh-card-price">
+                  ${{ listing.price|floatformat:0|intcomma }}
+                </div>
+
+                <div class="lh-card-address">
+                  <div>{{ listing.street }}</div>
+                  <span>{{ listing.city }}, {{ listing.state }} {{ listing.zipcode }}</span>
+                </div>
+
+                <div class="lh-card-meta">
+                  {{ listing.beds|default:"-" }} beds ·
+                  {{ listing.baths|default:"-" }} baths ·
+                  {% if listing.sqft %}
+                    {{ listing.sqft|intcomma }} sqft
+                  {% else %}
+                    — sqft
+                  {% endif %}
+                </div>
+
+                {% if listing.neighborhood %}
+                  <div class="lh-chip">
+                    {{ listing.neighborhood.name }}
+                  </div>
+                {% elif listing.home_type %}
+                  <div class="lh-chip">
+                    {{ listing.home_type.type_name }}
+                  </div>
+                {% endif %}
+
+                <a href="{% url 'public_listing_detail' listing.pk %}"
+                   class="ah-btn ah-btn-primary lh-card-btn">
+                  View details
+                </a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No listings yet. Add some in the admin dashboard.</p>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
