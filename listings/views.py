@@ -43,55 +43,58 @@ def _get_client_ip(request):
 def public_listings(request):
     qs = Listing.objects.filter(status="active", visibility="Y")
 
-    # parameters from your search form (GET)
-    q = (request.GET.get("q") or "").strip()
-    home_type_id = request.GET.get("home_type") or None
-    price_range_id = request.GET.get("price_range") or None
-    neighborhood_id = request.GET.get("neighborhood") or None
+    # Bind form to GET data so it keeps selections on reload
+    form = ListingSearchForm(request.GET or None)
 
-    # apply filters
-    if q:
-        qs = qs.filter(
-            Q(street__icontains=q)
-            | Q(city__icontains=q)
-            | Q(description__icontains=q)
-        )
+    # Defaults for logging
+    q = ""
+    home_type = price_range = neighborhood = None
 
-    if home_type_id:
-        qs = qs.filter(home_type_id=home_type_id)
+    if form.is_valid():
+        q = (form.cleaned_data.get("q") or "").strip()
+        home_type = form.cleaned_data.get("home_type")
+        price_range = form.cleaned_data.get("price_range")
+        neighborhood = form.cleaned_data.get("neighborhood")
 
-    if price_range_id:
-        qs = qs.filter(price_range_id=price_range_id)
+        if q:
+            qs = qs.filter(
+                Q(street__icontains=q)
+                | Q(city__icontains=q)
+                | Q(description__icontains=q)
+            )
 
-    if neighborhood_id:
-        qs = qs.filter(neighborhood_id=neighborhood_id)
+        if home_type:
+            qs = qs.filter(home_type=home_type)
+
+        if price_range:
+            qs = qs.filter(price_range=price_range)
+
+        if neighborhood:
+            qs = qs.filter(neighborhood=neighborhood)
 
     listings = qs.order_by("-created_at")
 
-    # ---- LOG SEARCH (only if something was actually filtered) ----
-    if any([q, home_type_id, price_range_id, neighborhood_id]):
+    # Log searches only when something was actually filtered
+    if any([q, home_type, price_range, neighborhood]):
         SearchLog.objects.create(
             query=q,
-            home_type_id=home_type_id or None,
-            price_range_id=price_range_id or None,
-            neighborhood_id=neighborhood_id or None,
+            home_type=home_type,
+            price_range=price_range,
+            neighborhood=neighborhood,
             results_count=listings.count(),
             ip_address=_get_client_ip(request),
             user=request.user if request.user.is_authenticated else None,
             user_agent=request.META.get("HTTP_USER_AGENT", "")[:255],
         )
 
-    context = {
-        "listings": listings,
-        "home_types": HomeType.objects.all(),
-        "price_ranges": PriceRange.objects.all(),
-        "neighborhoods": Neighborhood.objects.all(),
-        "current_q": q,
-        "current_home_type": home_type_id,
-        "current_price_range": price_range_id,
-        "current_neighborhood": neighborhood_id,
-    }
-    return render(request, "site/listings.html", context)
+    return render(
+        request,
+        "site/listings.html",
+        {
+            "listings": listings,
+            "search_form": form,   # <-- same name as home page
+        },
+    )
 
 
 # listings/views.py
