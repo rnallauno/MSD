@@ -1,25 +1,111 @@
 {% extends "site/base_public.html" %}
-
-{% block title %}About Us · AdVance Home{% endblock %}
+{% load static %}
 
 {% block content %}
-<section class="ah-section">
-    <h1 class="ah-section-title">About AdVance Home Real Estate</h1>
-    <div class="ah-prose">
+<section class="ah-section contact-page">
+  <div class="ah-container contact-layout">
+
+    <!-- LEFT: COPY + CONTACT INFO -->
+    <div>
+      <p class="contact-kicker">About</p>
+      <h1 class="contact-name">Madison Vance</h1>
+
+      <p class="contact-line">
+        <strong>Office:</strong> 1234 Market Street, Suite 500, Omaha, NE 68102
+      </p>
+      <p class="contact-line">
+        <strong>Phone:</strong> <a href="tel:14025550123">(402) 555-0123</a>
+      </p>
+      <p class="contact-line">
+        <strong>Email:</strong>
+        <a href="mailto:madison@advancehome.com">madison@advancehome.com</a>
+      </p>
+      <p class="contact-line">
+        <strong>Website:</strong>
+        <a href="https://www.advancehome.com" target="_blank" rel="noopener">
+          www.advancehome.com
+        </a>
+      </p>
+
+      <div class="contact-body">
         <p>
-            AdVance Home Real Estate is a concept platform designed to support a
-            modern, data-driven housing experience in the Omaha metro area.
+          Madison Vance believes that buying or selling a home shouldn’t be lost
+          in a maze of generic real-estate portals. She wanted a custom,
+          modern website that keeps the focus on what matters most:
+          clear information, beautiful photography, and a simple way to reach her
+          directly.
         </p>
+
         <p>
-            Our goal is to give residents, property managers, and administrators
-            a clean space to share listings, understand neighborhood context,
-            and keep key resources together in one simple portal.
+          This site is built around Madison’s day-to-day work as a full-service
+          real-estate professional in the Omaha area. Every property is presented
+          with a detailed description, a curated set of photos, and easy access
+          to the key facts buyers care about.
         </p>
+
+        <h2 class="ld-section-title">How this site helps you</h2>
+        <ul style="padding-left: 1.1rem; margin: 0 0 1rem;">
+          <li>
+            Browse up-to-date listings with full addresses, prices, and
+            rich property descriptions.
+          </li>
+          <li>
+            Quickly see each home’s style (Tudor, Ranch, Townhome, Condominium,
+            and more) and the neighborhood it belongs to, such as Downtown,
+            Benson, Happy Hollow, or Rockbrook.
+          </li>
+          <li>
+            View four high-quality photos for every property and use the
+            <em>Contact about this home</em> button on each listing to email
+            Madison directly with questions or to schedule a showing.
+          </li>
+          <li>
+            Check the status of each property at a glance:
+            <strong>Available</strong>, <strong>Pending</strong>, or
+            <strong>Sold</strong>.
+          </li>
+          <li>
+            Discover the Featured Property on the home page — Madison selects
+            one standout listing each week so you can see what’s new and
+            noteworthy right away.
+          </li>
+          <li>
+            Use powerful search tools to filter by home type, neighborhood,
+            or price range in $50,000 increments, so you only see homes that
+            truly fit your budget and lifestyle.
+          </li>
+        </ul>
+
         <p>
-            Behind the scenes, your admin dashboard lets staff quickly add homes,
-            upload photos, manage pricing, and maintain Omaha-specific insights
-            in one place.
+          Behind the scenes, Madison reviews search reports each month to
+          understand which home types, neighborhoods, and price ranges are most
+          popular. That insight helps her price new listings wisely and keep
+          her clients informed about market trends.
         </p>
+
+        <p>
+          Whether you’re buying your first home, upgrading, or selling a
+          property in the Omaha area, Madison is committed to combining clear
+          information, thoughtful advice, and responsive communication —
+          starting right here on this site.
+        </p>
+      </div>
+
+      <div class="contact-cta">
+        {# You can swap this href to open your contact modal instead if you like #}
+        <a href="{% url 'public_contact' %}" class="ah-btn ah-btn-primary">
+          Contact Madison
+        </a>
+      </div>
     </div>
+
+    <!-- RIGHT: PORTRAIT -->
+    <div class="contact-photo">
+      {# Replace this path with your actual portrait image #}
+      <img src="{% static 'img/agent.jpg' %}"
+           alt="Portrait of Madison Vance">
+    </div>
+
+  </div>
 </section>
 {% endblock %}

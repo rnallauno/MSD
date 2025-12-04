@@ -3,119 +3,255 @@
 {% load humanize %}
 
 {% block content %}
-<section class="ah-section">
+
+<main class="ah-section">
   <div class="ah-container">
 
-    <!-- BACK BUTTON -->
-    <a href="{% url 'public_listings' %}" class="ld-back-link">
-      ← Back to listings
+    <!-- BACK BUTTON (now inside padded container) -->
+    <a href="javascript:void(0)"
+       class="ld-back-link"
+       onclick="
+            if (document.referrer && !document.referrer.includes('/listings/{{ listing.pk }}/')) {
+                history.back();
+            } else {
+                window.location.href='{% url 'public_listings' %}';
+            }
+       ">
+        ← Back
     </a>
 
-    <!-- PHOTO GALLERY -->
-    <section class="ld-gallery ld-gallery--wide">
-      {% if photos %}
-        <div class="ld-image-wrapper">
-          {% for photo in photos %}
-            <img
-              src="{{ photo.image.url }}"
-              alt="{{ listing }}"
-              class="ld-image{% if forloop.first %} ld-image--active{% endif %}"
-              data-index="{{ forloop.counter0 }}"
-            >
-          {% endfor %}
+    <!-- LAYOUT WRAPPER -->
+    <div class="ld-layout">
 
-          <button type="button" class="ld-nav ld-nav-prev" aria-label="Previous photo">
-            &#10094;
-          </button>
-          <button type="button" class="ld-nav ld-nav-next" aria-label="Next photo">
-            &#10095;
-          </button>
+      <!-- LEFT: PHOTO GALLERY -->
+      <section class="ld-gallery">
+        {% if photos %}
+          <div class="ld-image-wrapper">
+            {% for photo in photos %}
+              <img
+                src="{{ photo.image.url }}"
+                alt="{{ listing }}"
+                class="ld-image{% if forloop.first %} ld-image--active{% endif %}"
+                data-index="{{ forloop.counter0 }}"
+              >
+            {% endfor %}
 
-          <div class="ld-counter">
-            <span id="ld-current">1</span> / {{ photos|length }}
+            <button type="button"
+                    class="ld-nav ld-nav-prev"
+                    aria-label="Previous photo">
+              &#10094;
+            </button>
+            <button type="button"
+                    class="ld-nav ld-nav-next"
+                    aria-label="Next photo">
+              &#10095;
+            </button>
+
+            <div class="ld-counter">
+              <span id="ld-current">1</span> / {{ photos|length }}
+            </div>
           </div>
-        </div>
-      {% else %}
-        <div class="ld-image-wrapper ld-image-wrapper--empty">
-          <span>No photos available</span>
-        </div>
-      {% endif %}
-    </section>
+        {% else %}
+          <div class="ld-image-wrapper ld-image-wrapper--empty">
+            <span>No photos available</span>
+          </div>
+        {% endif %}
+      </section>
 
-    <!-- LISTING INFO BELOW THE PHOTO -->
-    <aside class="ld-info ld-info--full">
-      <h1 class="ld-price">${{ listing.price|intcomma }}</h1>
+      <!-- RIGHT: LISTING INFO -->
+      <aside class="ld-info">
+        <h1 class="ld-price">${{ listing.price|intcomma }}</h1>
 
-      <p class="ld-address-main">
-        {{ listing.street }}<br>
-        {{ listing.city }}, {{ listing.state }} {{ listing.zipcode }}
-      </p>
-
-      <p class="ld-meta">
-        {% if listing.beds %}{{ listing.beds|floatformat:0 }} beds{% endif %}
-        {% if listing.baths %} · {{ listing.baths|floatformat:1 }} baths{% endif %}
-        {% if listing.sqft %} · {{ listing.sqft|intcomma }} sqft{% endif %}
-      </p>
-
-      {% if listing.neighborhood %}
-        <p class="ld-tag-row">
-          <span class="ld-tag">{{ listing.neighborhood.name }}</span>
+        <p class="ld-address-main">
+          {{ listing.street }}<br>
+          {{ listing.city }}, {{ listing.state }} {{ listing.zipcode }}
         </p>
-      {% endif %}
 
-      {% if listing.description %}
-        <h2 class="ld-section-title">Overview</h2>
-        <p class="ld-description">{{ listing.description }}</p>
-      {% endif %}
+        <p class="ld-meta">
+          {% if listing.beds %}{{ listing.beds|floatformat:0 }} beds{% endif %}
+          {% if listing.baths %} · {{ listing.baths|floatformat:1 }} baths{% endif %}
+          {% if listing.sqft %} · {{ listing.sqft|intcomma }} sqft{% endif %}
+        </p>
 
-      <h2 class="ld-section-title">Property details</h2>
-      <dl class="ld-specs">
-        {% if listing.year_built %}
-          <div><dt>Year built</dt><dd>{{ listing.year_built }}</dd></div>
+        {% if listing.neighborhood %}
+          <p class="ld-tag-row">
+            <span class="ld-tag">{{ listing.neighborhood.name }}</span>
+          </p>
         {% endif %}
-        {% if listing.home_type %}
-          <div><dt>Type</dt><dd>{{ listing.home_type }}</dd></div>
-        {% endif %}
-        {% if listing.garage_spaces %}
-          <div><dt>Garage</dt><dd>{{ listing.garage_spaces }} spaces</dd></div>
-        {% endif %}
-        {% if listing.lot_size_sqft %}
-          <div><dt>Lot size</dt><dd>{{ listing.lot_size_sqft|intcomma }} sqft</dd></div>
-        {% endif %}
-        {% if listing.hoa_fee %}
-          <div><dt>HOA fee</dt><dd>${{ listing.hoa_fee|floatformat:0 }}/mo</dd></div>
-        {% endif %}
-      </dl>
-    </aside>
 
+        <!-- Contact button for THIS listing -->
+        <button type="button"
+                class="ah-btn ah-btn-primary ld-contact-cta"
+                id="open-contact-modal">
+          Contact about this home
+        </button>
+
+        {% if listing.description %}
+          <h2 class="ld-section-title">Overview</h2>
+          <p class="ld-description">{{ listing.description }}</p>
+        {% endif %}
+
+        <h2 class="ld-section-title">Property details</h2>
+        <dl class="ld-specs">
+          {% if listing.year_built %}
+            <div><dt>Year built</dt><dd>{{ listing.year_built }}</dd></div>
+          {% endif %}
+          {% if listing.home_type %}
+            <div><dt>Type</dt><dd>{{ listing.home_type }}</dd></div>
+          {% endif %}
+          {% if listing.garage_spaces %}
+            <div><dt>Garage</dt><dd>{{ listing.garage_spaces }} spaces</dd></div>
+          {% endif %}
+          {% if listing.lot_size_sqft %}
+            <div><dt>Lot size</dt><dd>{{ listing.lot_size_sqft|intcomma }} sqft</dd></div>
+          {% endif %}
+          {% if listing.hoa_fee %}
+            <div><dt>HOA fee</dt><dd>${{ listing.hoa_fee|floatformat:0 }}/mo</dd></div>
+          {% endif %}
+        </dl>
+      </aside>
+
+    </div>  {# /.ld-layout #}
+
+  </div>  {# /.ah-container #}
+</main>
+
+<!-- CONTACT MODAL (reuses same CSS as /contact page) -->
+<div class="contact-modal" id="contact-modal" aria-hidden="true">
+  <div class="contact-modal-backdrop" id="contact-modal-backdrop"></div>
+
+  <div class="contact-modal-dialog"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="contact-modal-title">
+
+    <button type="button"
+            class="contact-modal-close"
+            id="close-contact-modal">&times;</button>
+
+    {% if sent %}
+      <h2 id="contact-modal-title">Thank you!</h2>
+      <p class="contact-modal-text">
+        Your message about
+        <strong>{{ listing.street }}, {{ listing.city }}</strong>
+        has been sent. We’ll get back to you as soon as possible.
+      </p>
+      <button type="button"
+              class="ah-btn ah-btn-primary ah-btn-full"
+              id="close-contact-modal-bottom">
+        Close
+      </button>
+    {% else %}
+      <h2 id="contact-modal-title">Ask about this home</h2>
+      <p class="contact-modal-text">
+        Fill out the form below and we’ll reach out about
+        <strong>{{ listing.street }}, {{ listing.city }}</strong>.
+      </p>
+
+      <form method="post" class="contact-form" novalidate>
+        {% csrf_token %}
+
+        <div class="contact-field">
+          <label for="id_name">Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="contact-error">{{ form.name.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_email">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="contact-error">{{ form.email.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_phone">Phone (optional)</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div class="contact-error">{{ form.phone.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_message">Message</label>
+          {{ form.message }}
+          {% if form.message.errors %}
+            <div class="contact-error">{{ form.message.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="ah-btn ah-btn-primary ah-btn-full">
+          Send message
+        </button>
+      </form>
+    {% endif %}
   </div>
-</section>
+</div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const images = Array.from(document.querySelectorAll('.ld-image'));
-    if (!images.length) return;
+  document.addEventListener("DOMContentLoaded", function () {
+    /* ---- Gallery slider ---- */
+    const images = Array.from(document.querySelectorAll(".ld-image"));
+    if (images.length) {
+      let current = 0;
+      const total = images.length;
+      const prevBtn = document.querySelector(".ld-nav-prev");
+      const nextBtn = document.querySelector(".ld-nav-next");
+      const counterEl = document.getElementById("ld-current");
 
-    let current = 0;
-    const total = images.length;
-    const prevBtn = document.querySelector('.ld-nav-prev');
-    const nextBtn = document.querySelector('.ld-nav-next');
-    const counterEl = document.getElementById('ld-current');
+      function show(index) {
+        images[current].classList.remove("ld-image--active");
+        current = (index + total) % total;
+        images[current].classList.add("ld-image--active");
+        if (counterEl) counterEl.textContent = current + 1;
+      }
 
-    function show(index) {
-      images[current].classList.remove('ld-image--active');
-      current = (index + total) % total;   // wrap around
-      images[current].classList.add('ld-image--active');
-      if (counterEl) counterEl.textContent = current + 1;
+      if (prevBtn) prevBtn.addEventListener("click", () => show(current - 1));
+      if (nextBtn) nextBtn.addEventListener("click", () => show(current + 1));
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") show(current - 1);
+        if (e.key === "ArrowRight") show(current + 1);
+      });
     }
 
-    prevBtn && prevBtn.addEventListener('click', () => show(current - 1));
-    nextBtn && nextBtn.addEventListener('click', () => show(current + 1));
+    /* ---- Contact modal for this listing ---- */
+    const modal = document.getElementById("contact-modal");
+    const openBtn = document.getElementById("open-contact-modal");
+    const closeBtn = document.getElementById("close-contact-modal");
+    const closeBottom = document.getElementById("close-contact-modal-bottom");
+    const backdrop = document.getElementById("contact-modal-backdrop");
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') show(current - 1);
-      if (e.key === 'ArrowRight') show(current + 1);
+    function openModal() {
+      if (!modal) return;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    if (openBtn) openBtn.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (closeBottom) closeBottom.addEventListener("click", closeModal);
+    if (backdrop) backdrop.addEventListener("click", closeModal);
+
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeModal();
     });
+
+    // Auto-open modal after a successful POST
+    const sentFlag = "{{ sent|yesno:'true,false' }}";
+    if (sentFlag === "true") {
+      openModal();
+    }
   });
 </script>
+
 {% endblock %}

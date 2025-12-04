@@ -1,0 +1,38 @@
+{% if search_form %}
+<form method="get"
+      action="{% url 'public_listings' %}"
+      class="ls-search">
+
+  <div class="ls-search-grid">
+
+    <div class="ls-field">
+      <label for="{{ search_form.home_type.id_for_label }}">Home type</label>
+      {{ search_form.home_type }}
+    </div>
+
+    <div class="ls-field">
+      <label for="{{ search_form.price_range.id_for_label }}">Price range</label>
+      {{ search_form.price_range }}
+    </div>
+
+    <div class="ls-field">
+      <label for="{{ search_form.neighborhood.id_for_label }}">Neighborhood</label>
+      {{ search_form.neighborhood }}
+    </div>
+
+    <div class="ls-actions">
+      <button type="submit" class="ah-btn ah-btn-primary ls-search-btn">
+        Search homes
+      </button>
+
+      {% if has_filters %}
+        <a href="{% url 'public_listings' %}"
+           class="ls-clear-link">
+          Clear filters
+        </a>
+      {% endif %}
+    </div>
+
+  </div>
+</form>
+{% endif %}

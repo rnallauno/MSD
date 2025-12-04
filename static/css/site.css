@@ -567,14 +567,15 @@ body.ah-body {
         grid-template-columns: 1fr;
     }
 }
-
 /* ========== LISTING DETAIL GALLERY ========== */
 
+/* Stack gallery + info in one column */
 .ld-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
-    gap: 2rem;
-    align-items: flex-start;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 /* Gallery wrapper */
@@ -632,13 +633,8 @@ body.ah-body {
     transition: background 0.15s ease, transform 0.08s ease;
 }
 
-.ld-nav-prev {
-    left: 16px;
-}
-
-.ld-nav-next {
-    right: 16px;
-}
+.ld-nav-prev { left: 16px; }
+.ld-nav-next { right: 16px; }
 
 .ld-nav:hover {
     background: rgba(0, 0, 0, 0.75);
@@ -657,14 +653,16 @@ body.ah-body {
     font-size: 12px;
 }
 
-/* Right-hand panel */
+/* Info card UNDER the gallery */
 .ld-info {
+    width: 100%;
     background: #ffffff;
     border-radius: 18px;
-    padding: 1.5rem 1.7rem;
-    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+    padding: 24px 24px 28px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
 }
 
+/* Typography inside card */
 .ld-price {
     margin: 0 0 0.25rem;
     font-size: 2rem;
@@ -737,16 +735,6 @@ body.ah-body {
     color: #111827;
 }
 
-/* Responsive layout */
-@media (max-width: 960px) {
-    .ld-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .ld-info {
-        margin-top: 1.5rem;
-    }
-}
 /* ------- DETAIL PAGE BACK BUTTON ------- */
 .ld-back-link {
     display: inline-flex;
@@ -787,4 +775,257 @@ body.ah-body {
 /* Small tweaks so it looks good stacked */
 .ld-price {
     margin-top: 0;
+}
+
+/* --- Contact page main layout --- */
+
+.contact-page {
+    padding-top: 48px;
+    padding-bottom: 80px;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 40px;
+    align-items: center;
+}
+
+.contact-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.contact-name {
+    font-size: 30px;
+    margin: 0 0 18px;
+}
+
+.contact-line {
+    margin: 0;
+    font-size: 14px;
+}
+
+.contact-line + .contact-line {
+    margin-top: 4px;
+}
+
+.contact-line a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.contact-line a:hover {
+    text-decoration: underline;
+}
+
+.contact-body {
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4b5563;
+    max-width: 560px;
+}
+
+.contact-cta {
+    margin-top: 22px;
+}
+
+.contact-photo {
+    text-align: right;
+}
+
+.contact-photo img {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.32);
+}
+
+/* --- Contact modal --- */
+
+.contact-modal {
+    position: fixed;
+    inset: 0;
+    display: none;           /* hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+}
+
+.contact-modal.is-open {
+    display: flex;           /* shown when JS adds .is-open */
+}
+
+.contact-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.contact-modal-dialog {
+    position: relative;
+    z-index: 41;
+    background: #ffffff;
+    border-radius: 18px;
+    max-width: 480px;
+    width: 90%;
+    padding: 24px 24px 22px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.4);
+}
+
+.contact-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.contact-modal-close:hover {
+    color: #111827;
+}
+
+.contact-modal-text {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.contact-field input,
+.contact-field textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.25);
+}
+
+.contact-error {
+    margin-top: 3px;
+    font-size: 12px;
+    color: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-photo {
+        text-align: center;
+        order: -1; /* photo on top on mobile */
+    }
+
+    .contact-photo img {
+        max-width: 320px;
+    }
+}
+
+/* ---------- LISTING SEARCH BAR ---------- */
+
+.ls-search {
+    margin-bottom: 1.75rem;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.ls-search-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px 18px;
+    align-items: flex-end;
+}
+
+.ls-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+/* style the selects from the form */
+.ls-input {
+    width: 100%;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 7px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #ffffff;
+}
+
+.ls-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.25);
+}
+
+.ls-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ls-search-btn {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.ls-clear-link {
+    font-size: 13px;
+    color: #6b7280;
+    text-decoration: none;
+}
+
+.ls-clear-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive: collapse grid on small screens */
+@media (max-width: 900px) {
+    .ls-search-grid {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .ls-actions {
+        justify-content: flex-start;
+    }
 }

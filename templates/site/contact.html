@@ -1,15 +1,156 @@
 {% extends "site/base_public.html" %}
-
-{% block title %}Contact Us · AdVance Home{% endblock %}
+{% load static %}
 
 {% block content %}
-<section class="ah-section">
-    <h1 class="ah-section-title">Contact Us</h1>
-    <div class="ah-prose">
-        <p>
-            This demo contact section doesn’t send real email yet, but it shows
-            where your future contact form will live.
+<section class="ah-section contact-page">
+  <div class="ah-container contact-layout">
+    <!-- LEFT: text -->
+    <div class="contact-copy">
+      <p class="contact-kicker">About Me</p>
+      <h1 class="contact-name">Madison Vance</h1>
+
+      <p class="contact-line"><strong>Phone:</strong> (402) 555-0123</p>
+      <p class="contact-line">
+        <strong>Email:</strong>
+        <a href="mailto:madison@advancehome.com">madison@advancehome.com</a>
+      </p>
+
+      <p class="contact-body">
+        Have a question, want more information, or ready to schedule a showing?
+        <strong>I’m here to help.</strong>
         </p>
+
+        <p class="contact-body">
+    Whether you're buying your first home, exploring neighborhoods, or preparing
+    to list your property, I’m committed to providing clear guidance and quick,
+    reliable communication. Every message submitted through this page goes
+    <strong>directly to my inbox</strong> — no automated filters, no delays.
+
+        </p>
+
+<p class="contact-body">
+    Tell me a little about what you’re looking for, and I’ll personally follow up
+    with next steps, professional insight, and any details you need to make a
+    confident decision.
+</p>
+
+<p class="contact-body">
+    I look forward to helping you with your real estate goals.
+</p>
+
+      <button type="button"
+              class="ah-btn ah-btn-primary contact-cta"
+              id="open-contact-modal">
+        Contact
+      </button>
     </div>
+
+    <!-- RIGHT: photo -->
+    <div class="contact-photo">
+      <img src="{% static 'img/agent.jpg' %}"
+           alt="Portrait of Josh Armstrong">
+    </div>
+  </div>
 </section>
+
+<!-- MODAL -->
+<div class="contact-modal" id="contact-modal" aria-hidden="true">
+  <div class="contact-modal-backdrop" id="contact-modal-backdrop"></div>
+
+  <div class="contact-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+    <button type="button" class="contact-modal-close" id="close-contact-modal">&times;</button>
+
+    {% if sent %}
+      <h2 id="contact-modal-title">Thank you!</h2>
+      <p class="contact-modal-text">
+        Your message has been sent. We’ll get back to you as soon as possible.
+      </p>
+      <button type="button" class="ah-btn ah-btn-primary ah-btn-full"
+              id="close-contact-modal-bottom">
+        Close
+      </button>
+    {% else %}
+      <h2 id="contact-modal-title">Send a message</h2>
+      <p class="contact-modal-text">
+        Fill out the form below and your message will be delivered directly to our inbox.
+      </p>
+
+      <form method="post" class="contact-form" novalidate>
+        {% csrf_token %}
+
+        <div class="contact-field">
+          <label for="id_name">Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="contact-error">{{ form.name.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_email">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="contact-error">{{ form.email.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_phone">Phone (optional)</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div class="contact-error">{{ form.phone.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <div class="contact-field">
+          <label for="id_message">Message</label>
+          {{ form.message }}
+          {% if form.message.errors %}
+            <div class="contact-error">{{ form.message.errors|striptags }}</div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="ah-btn ah-btn-primary ah-btn-full">
+          Send message
+        </button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("contact-modal");
+    const openBtn = document.getElementById("open-contact-modal");
+    const closeBtn = document.getElementById("close-contact-modal");
+    const closeBottom = document.getElementById("close-contact-modal-bottom");
+    const backdrop = document.getElementById("contact-modal-backdrop");
+
+    function openModal() {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    if (openBtn) openBtn.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (closeBottom) closeBottom.addEventListener("click", closeModal);
+    if (backdrop) backdrop.addEventListener("click", closeModal);
+
+    // Close on ESC
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeModal();
+    });
+
+    // Auto-open after successful submit
+    const sentFlag = "{{ sent|yesno:'true,false' }}";
+    if (sentFlag === "true") {
+      openModal();
+    }
+  });
+</script>
 {% endblock %}

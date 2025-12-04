@@ -2,6 +2,8 @@
 {% load humanize %}
 
 {% block content %}
+
+{# ---------- HERO ---------- #}
 <section class="ah-hero{% if featured %} ah-hero-with-photo{% endif %}"
          {% if featured and featured.main_photo_url %}
          style="background-image: linear-gradient(120deg, rgba(18,22,43,.9), rgba(22,28,65,.85)), url('{{ featured.main_photo_url }}');"
@@ -52,12 +54,16 @@
     </div>
 </section>
 
+{# ---------- LATEST LISTINGS + SEARCH ---------- #}
 <section class="ah-section">
     <div class="ah-container">
         <header class="ah-section-header">
             <h2>Latest listings</h2>
             <a href="{% url 'public_listings' %}" class="ah-link">View all listings →</a>
         </header>
+
+        {# Search bar that posts to the listings page #}
+        {% include "site/_listing_search.html" %}
 
         {% if latest_listings %}
         <div class="ah-card-grid">
@@ -106,4 +112,5 @@
         {% endif %}
     </div>
 </section>
+
 {% endblock %}

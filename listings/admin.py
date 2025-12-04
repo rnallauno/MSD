@@ -2,8 +2,17 @@ from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.forms.widgets import ClearableFileInput
-
-from .models import Listing, ListingPhoto, Neighborhood, PriceRange, HomeType
+from django.http import HttpResponse
+import csv
+from .models import Listing, Neighborhood, PriceRange, HomeType, SearchLog
+from .models import (
+    Listing,
+    ListingPhoto,
+    Neighborhood,
+    PriceRange,
+    HomeType,
+    OmahaInfo,
+)
 
 
 # ---------- Inline for existing photos ---------- #
@@ -156,3 +165,100 @@ class PriceRangeAdmin(admin.ModelAdmin):
     list_display = ("min_price", "max_price")
     ordering = ("min_price",)
     search_fields = ("min_price", "max_price")
+
+@admin.register(OmahaInfo)
+class OmahaInfoAdmin(admin.ModelAdmin):
+    list_display = ("title", "is_visible", "sort_order", "preview")
+    list_editable = ("is_visible", "sort_order")
+    search_fields = ("title", "short_description", "description")
+    list_filter = ("is_visible",)
+    readonly_fields = ("preview", "created_at", "updated_at")
+    fieldsets = (
+        ("Content", {
+            "fields": ("title", "short_description", "description")
+        }),
+        ("Link & image", {
+            "fields": ("link", "image", "preview")
+        }),
+        ("Display options", {
+            "fields": ("is_visible", "sort_order")
+        }),
+        ("Timestamps", {
+            "fields": ("created_at", "updated_at"),
+            "classes": ("collapse",),
+        }),
+    )
+
+    def preview(self, obj):
+        if not obj or not obj.image:
+            return ""
+        return format_html(
+            '<img src="{}" style="height:70px;border-radius:6px;">',
+            obj.image.url,
+        )
+
+    preview.short_description = "Preview"
+
+from .models import Listing, Neighborhood, PriceRange, HomeType, SearchLog
+# ... your existing ListingAdmin, etc. ...
+
+
+@admin.register(SearchLog)
+class SearchLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "created_at",
+        "query",
+        "home_type",
+        "price_range",
+        "neighborhood",
+        "results_count",
+        "user",
+        "ip_address",
+    )
+    list_filter = (
+        "home_type",
+        "price_range",
+        "neighborhood",
+        "created_at",
+    )
+    search_fields = ("query", "user__username", "ip_address", "user_agent")
+    date_hierarchy = "created_at"
+
+    actions = ["export_as_csv"]   # <---- REQUIRED
+
+    def export_as_csv(self, request, queryset):
+        import csv
+        from django.http import HttpResponse
+
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="search_log.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([
+            "Timestamp",
+            "Query",
+            "Home type",
+            "Price range",
+            "Neighborhood",
+            "Results count",
+            "User",
+            "IP Address",
+            "User Agent",
+        ])
+
+        for log in queryset:
+            writer.writerow([
+                log.created_at.isoformat(),
+                log.query,
+                str(log.home_type or ""),
+                str(log.price_range or ""),
+                str(log.neighborhood or ""),
+                log.results_count,
+                log.user.username if log.user else "",
+                log.ip_address or "",
+                log.user_agent or "",
+            ])
+
+        return response
+
+    export_as_csv.short_description = "Export selected search logs as CSV"

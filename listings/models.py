@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.conf import settings
 
 User = get_user_model()
 
@@ -152,3 +153,93 @@ class ListingPhoto(models.Model):
 
     def __str__(self):
         return f"Photo {self.id} for {self.listing}"
+
+class OmahaInfo(models.Model):
+    title = models.CharField(max_length=200)
+    short_description = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Optional shorter blurb shown on the card. "
+                  "If left blank, the main description will be truncated."
+    )
+    description = models.TextField(
+        help_text="Longer description that can be shown on detail or external page."
+    )
+    link = models.URLField(
+        "External link",
+        max_length=500,
+        blank=True,
+        help_text="Where the 'View resource' button should go (optional)."
+    )
+    image = models.ImageField(
+        upload_to="omaha_info/",
+        blank=True,
+        null=True,
+        help_text="Photo or hero image for this Omaha resource."
+    )
+
+    is_visible = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(
+        default=0,
+        help_text="Lower numbers appear first."
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("sort_order", "title")
+        verbose_name = "Omaha info item"
+        verbose_name_plural = "Omaha info items"
+
+    def __str__(self):
+        return self.title
+
+class SearchLog(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # what the user searched for
+    query = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Free-text keyword search, if any.",
+    )
+    home_type = models.ForeignKey(
+        "HomeType",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="search_logs",
+    )
+    price_range = models.ForeignKey(
+        "PriceRange",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="search_logs",
+    )
+    neighborhood = models.ForeignKey(
+        "Neighborhood",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="search_logs",
+    )
+
+    # meta info
+    results_count = models.PositiveIntegerField(default=0)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="listing_search_logs",
+    )
+    user_agent = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Search at {self.created_at:%Y-%m-%d %H:%M}"

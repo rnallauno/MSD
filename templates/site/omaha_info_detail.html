@@ -1,0 +1,52 @@
+{% extends "site/base_public.html" %}
+
+{% block content %}
+<section class="ah-section">
+  <div class="ah-container" style="max-width: 960px;">
+
+    <!-- Back link -->
+    <a href="{% url 'public_omaha_info' %}" class="ld-back-link">
+      ← Back to Omaha info
+    </a>
+
+    <!-- Big image on its own row -->
+    {% if item.image %}
+      <div class="ld-gallery ld-gallery--wide">
+        <div class="ld-image-wrapper">
+          <img src="{{ item.image.url }}"
+               alt="{{ item.title }}"
+               class="ld-image ld-image--active">
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Info card BELOW the image -->
+    <article class="ld-info ld-info--full">
+      <h1 class="ld-price" style="font-size:1.8rem; color:#111827;">
+        {{ item.title }}
+      </h1>
+
+      {% if item.short_description %}
+        <p class="ld-meta" style="margin-bottom:1rem;">
+          {{ item.short_description }}
+        </p>
+      {% endif %}
+
+      <h2 class="ld-section-title">Details</h2>
+      <p class="ld-description">
+        {{ item.description|linebreaks }}
+      </p>
+
+      {% if item.link %}
+        <div style="margin-top:1.5rem;">
+          <a href="{{ item.link }}" target="_blank" rel="noopener"
+             class="ah-btn ah-btn-secondary">
+            Open external site
+          </a>
+        </div>
+      {% endif %}
+    </article>
+
+  </div>
+</section>
+{% endblock %}

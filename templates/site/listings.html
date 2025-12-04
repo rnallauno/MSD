@@ -2,27 +2,33 @@
 {% load static humanize %}
 
 {% block content %}
-<div class="lh-shell">
-  <section class="lh-header-wrap">
-    <div class="ah-container lh-header">
-      <div>
-        <h1 class="lh-title">Homes for sale in Omaha</h1>
-        <p class="lh-subtitle">
-          Browse active listings published through the AdVance Home Real Estate admin portal.
-        </p>
-      </div>
-      <div class="lh-header-meta">
-        {% if listings %}
-          <span>{{ listings|length }} home{{ listings|length|pluralize }} available</span>
-        {% else %}
-          <span>No active listings yet</span>
-        {% endif %}
-      </div>
-    </div>
-  </section>
+<section class="ah-section">
+  <div class="ah-container">
 
-  <section class="lh-grid-wrap">
-    <div class="ah-container">
+    {# ---------- HEADER ---------- #}
+    <header class="lh-header-wrap">
+      <div class="lh-header">
+        <div>
+          <h1 class="lh-title">Homes for sale in Omaha</h1>
+          <p class="lh-subtitle">
+            Browse active listings published through the AdVance Home Real Estate admin portal.
+          </p>
+        </div>
+        <div class="lh-header-meta">
+          {% if listings %}
+            {{ listings|length }} home{{ listings|length|pluralize }} available
+          {% else %}
+            No active listings yet
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    {# ---------- SEARCH BAR ---------- #}
+    {% include "site/_listing_search.html" %}
+
+    {# ---------- LISTINGS GRID ---------- #}
+    <section class="lh-grid-wrap">
       {% if listings %}
         <div class="lh-grid">
           {% for listing in listings %}
@@ -80,9 +86,10 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No listings yet. Add some in the admin dashboard.</p>
+        <p>No listings yet for the listed filter. Please adjust filter or check back later as we add new listing frequently.</p>
       {% endif %}
-    </div>
-  </section>
-</div>
+    </section>
+
+  </div>
+</section>
 {% endblock %}
